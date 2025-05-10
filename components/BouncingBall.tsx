@@ -18,9 +18,8 @@ const BouncingBall = () => {
 
   const startBounce = () => {
     const maxBouncing = Math.floor(SCREEN_WIDTH / BALL_SIZE);
-
-    if (maxBouncing < 1) {
-      Alert.alert("Error","There is no enough space, the ball can't bounce.");
+    if (ballPosition.y - BALL_SIZE + maxBouncing < 0) {
+      Alert.alert("Error", "There is no enough space, the ball can't bounce.");
       return;
     } else {
       ballY.setValue(ballPosition.y);
@@ -56,12 +55,21 @@ const BouncingBall = () => {
     startBounce();
   }, [ballPosition.x || ballPosition.y]);
 
-  const handlePress = (event) => {
+  const handlePress = (event: { nativeEvent: { locationX: any; locationY: any; }; }) => {
     console.log(event);
     const { locationX, locationY } = event.nativeEvent;
+    let currentPositionX = locationX - BALL_SIZE / 2;
+    let currentPositionY = locationY - BALL_SIZE / 2;
+    if (currentPositionX < 0) currentPositionX = 0;
+    if (currentPositionY < 0) currentPositionY = 0;
+    if (currentPositionX + BALL_SIZE > SCREEN_WIDTH)
+      currentPositionX = SCREEN_WIDTH - BALL_SIZE;
+    if (currentPositionY + BALL_SIZE > SCREEN_HEIGHT)
+      currentPositionY = SCREEN_HEIGHT - BALL_SIZE;
+
     setBallPosition({
-      x: locationX - BALL_SIZE / 2,
-      y: locationY - BALL_SIZE / 2,
+      x: currentPositionX,
+      y: currentPositionY,
     });
   };
 
